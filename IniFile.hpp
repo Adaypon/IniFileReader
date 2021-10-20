@@ -6,6 +6,7 @@
 #include <vector>
 #include <fstream>
 #include <algorithm>
+#include <exception>
 
 class IniFile {
     std::map<
@@ -78,8 +79,8 @@ IniFile::IniFile(std::string path) {
 		}
 	}
 	else {
-		std::cerr << "Can't open file" << std::endl;
-		// TODO ???
+		std::cerr << "Can't open file " << path << std::endl;
+		throw std::invalid_argument("Unable to load the file");
 	}
 	fin.close();
 
