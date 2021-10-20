@@ -14,7 +14,7 @@ class IniFile {
         std::map<std::string, std::string>
     > _data;
 
-	const std::vector<std::string> _validBoolTrueNames = {"true", "True", "TRUE", "on", "On", "ON", "yes", "Yes", "YES", "y", "Y", "1"};
+	const std::vector<std::string> _validBoolTrueNames = {"true", "on", "yes", "y", "1"};
 public:
 	IniFile(std::string path);
 	
@@ -213,7 +213,10 @@ float IniFile::read(std::string section, std::string key, float defaultValue) co
 template<>
 bool IniFile::read(std::string section, std::string key, bool defaultValue) const {
 	if (sectionExists(section) && keyExists(section, key)) {
-		auto it = std::find(_validBoolTrueNames.begin(), _validBoolTrueNames.end(), _data.at(section).at(key));
+		std::string keyLowerCase = _data.at(section).at(key);
+		std::transform(keyLowerCase.begin(), keyLowerCase.end(), 
+					keyLowerCase.begin(), [](unsigned char c){ return std::tolower(c); });
+		auto it = std::find(_validBoolTrueNames.begin(), _validBoolTrueNames.end(), keyLowerCase);
 		return it != _validBoolTrueNames.end();
 	}
 	return defaultValue;
