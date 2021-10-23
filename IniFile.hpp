@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <map>
 #include <string>
 #include <vector>
@@ -83,10 +82,6 @@ IniFile::IniFile(std::string path) {
 		throw std::invalid_argument("Unable to load the file");
 	}
 	fin.close();
-
-	for (size_t i = 0; i < fileCache.size(); ++i) {
-		std::cout << fileCache[i] << std::endl;
-	}
 	
 	std::string strSection;
 	std::string strKey;
@@ -101,34 +96,22 @@ IniFile::IniFile(std::string path) {
 			first = 1;
 			last = fileCache[i].find_last_of(']');
 			strSection = fileCache[i].substr(first, last - first);
-			std::cout << strSection << std::endl;
 			_data.insert(std::pair<std::string, std::map<std::string, std::string>>(strSection, {}));
 		}
 		// insert params
 		else {
 			last = fileCache[i].find('=');
 			strKey = fileCache[i].substr(first, last);
-			std::cout << strKey << " ";
 			std::swap(first, last);
 			++first;
 			last = fileCache[i].size() - 1;
 			strValue = fileCache[i].substr(first, last);
 			if (!strValue.empty() && strValue[strValue.size() - 1] == '\r') {
-    			strValue.erase(strValue.size() - 1);
+				strValue.erase(strValue.size() - 1);
 			}
-			std::cout << strValue << std::endl;
 			_data.at(strSection).insert(std::pair<std::string, std::string>(strKey, strValue));
 		}
 	}
-	
-	std::cout << std::endl;
-	for (const auto &elem : _data) {
-   		std::cout << elem.first << std::endl;
-		for (const auto &elem2 : elem.second) {
-			std::cout << elem2.first << " " << elem2.second << std::endl;
-		}
-	}
-	
 }
 
 void IniFile::save(std::string path) const {
