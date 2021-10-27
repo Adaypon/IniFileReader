@@ -175,34 +175,43 @@ std::string IniFile::read(std::string section, std::string key, std::string defa
 
 template<>
 int IniFile::read(std::string section, std::string key, int defaultValue) const {
-	if (sectionExists(section) && keyExists(section, key)) {
-		// TODO check if value can be returned as int
+	try {
 		return std::stoi(_data.at(section).at(key));
 	}
-	return defaultValue;
+	catch (std::exception e) {
+		std::cerr << "Config file error in section: " << section << ", key: " << key << std::endl;
+		std::cerr << e.what() << std::endl;
+		return defaultValue;
+	}
 }
 
 template<>
 float IniFile::read(std::string section, std::string key, float defaultValue) const {
-	if (sectionExists(section) && keyExists(section, key)) {
-		// TODO check if value can be returned as float
+	try {
 		return std::stof(_data.at(section).at(key));
 	}
-	
-	return defaultValue;
+	catch (std::exception e) {
+		std::cerr << "Config file error in section: " << section << ", key: " << key << std::endl;
+		std::cerr << e.what() << std::endl;
+		return defaultValue;
+	}
 }
 
 
 template<>
 bool IniFile::read(std::string section, std::string key, bool defaultValue) const {
-	if (sectionExists(section) && keyExists(section, key)) {
+	try {
 		std::string keyLowerCase = _data.at(section).at(key);
 		std::transform(keyLowerCase.begin(), keyLowerCase.end(), 
 					keyLowerCase.begin(), [](unsigned char c){ return std::tolower(c); });
 		auto it = std::find(_validBoolTrueNames.begin(), _validBoolTrueNames.end(), keyLowerCase);
 		return it != _validBoolTrueNames.end();
 	}
-	return defaultValue;
+	catch (std::exception e) {
+		std::cerr << "Config file error in section: " << section << ", key: " << key << std::endl;
+		std::cerr << e.what() << std::endl;
+		return defaultValue;
+	}
 }
 
 template<>
